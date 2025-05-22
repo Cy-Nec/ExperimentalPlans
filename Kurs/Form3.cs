@@ -18,12 +18,11 @@ namespace Kurs
         private string[] factorNames = { "A", "B", "C", "D", "E" };
         private int totalGrids = 0;
 
-        public FormLat(int[] collectionData)
+        public FormLat(FactorData[] collectionData)
         {
             InitializeComponent();
-            this.dataCollection = collectionData;
-
-            for (int i = 0; i < dataCollection.Length; i++)
+            this.dataCollection = collectionData.Select(d => d.Count).ToArray(); 
+            for (int i = 0; i < collectionData.Length; i++)
             {
                 string item = $"{factorNames[i]}: {dataCollection[i]}";
                 listBoxBasic.Items.Add(item);

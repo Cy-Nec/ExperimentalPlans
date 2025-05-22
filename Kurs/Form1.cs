@@ -9,6 +9,18 @@ using System.Windows.Forms;
 
 namespace Kurs
 {
+    public class FactorData
+    {
+        public int Count { get; set; }
+        public List<double> Values { get; set; }
+
+        public FactorData(int count, List<double> values)
+        {
+            Count = count;
+            Values = values;
+        }
+    }
+
     public partial class FormBase : Form
     {
         public FormBase()
@@ -40,31 +52,39 @@ namespace Kurs
         }
 
         // Функция сбора данных из полей ввода
-        private int[] collectData(int count)
+        private FactorData[] collectData(int factorCount)
         {
-            int[] collectionData = new int[count];
-            for (int i = 0; i < count; i++)
+            var data = new FactorData[factorCount];
+            for (int i = 0; i < factorCount; i++)
             {
+                string input = "";
                 switch (i)
                 {
-                    case 0:
-                        collectionData[i] = int.Parse(textBoxA.Text);
-                        break;
-                    case 1:
-                        collectionData[i] = int.Parse(textBoxB.Text);
-                        break;
-                    case 2:
-                        collectionData[i] = int.Parse(textBoxC.Text);
-                        break;
-                    case 3:
-                        collectionData[i] = int.Parse(textBoxD.Text);
-                        break;
-                    case 4:
-                        collectionData[i] = int.Parse(textBoxE.Text);
-                        break;
+                    case 0: input = textBoxA.Text; break;
+                    case 1: input = textBoxB.Text; break;
+                    case 2: input = textBoxC.Text; break;
+                    case 3: input = textBoxD.Text; break;
+                    case 4: input = textBoxE.Text; break;
                 }
+
+                var parts = input.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                 .Select(part => part.Trim())
+                                 .ToArray();
+
+                if (parts.Length < 2 || !int.TryParse(parts[0], out int levelCount))
+                {
+                    throw new FormatException("Некорректный формат ввода.");
+                }
+
+                var values = parts.Skip(1).Select(double.Parse).ToList();
+                if (values.Count != levelCount)
+                {
+                    throw new FormatException("Количество значений не соответствует количеству уровней.");
+                }
+
+                data[i] = new FactorData(levelCount, values);
             }
-            return collectionData;
+            return data;
         }
 
         // Функция проверки заполненности полей
@@ -136,73 +156,73 @@ namespace Kurs
         // Блок защиты от некорректного ввода
         private void textBoxA_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxA.Text.Length >= 1 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxA.Text.Length >= 1 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
 
         private void textBoxD_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxD.Text.Length >= 1 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxD.Text.Length >= 1 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
 
         private void textBoxB_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxB.Text.Length >= 1 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxB.Text.Length >= 1 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
 
         private void textBoxC_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxC.Text.Length >= 1 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxC.Text.Length >= 1 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
 
         private void textBoxE_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxE.Text.Length >= 1 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxE.Text.Length >= 1 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
         private void textBoxCount_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '0' && e.KeyChar <= '9' || e.KeyChar == (char)8))
-            {
-                e.KeyChar = (char)0;
-            }
-            if (textBoxE.Text.Length >= 2 && e.KeyChar != (char)8)
-            {
-                e.KeyChar = (char)0;
-            }
+            //if (!(e.KeyChar >= '0' && e.KeyChar <= '9' || e.KeyChar == (char)8))
+            //{
+            //    e.KeyChar = (char)0;
+            //}
+            //if (textBoxE.Text.Length >= 2 && e.KeyChar != (char)8)
+            //{
+            //    e.KeyChar = (char)0;
+            //}
         }
 
         // Блок отслеживания изменения состояния всех radioButton
@@ -238,7 +258,6 @@ namespace Kurs
 
         private void buttonPlan_Click(object sender, EventArgs e)
         {
-            // Проверка заполненности полей
             if (!areaIsFill())
             {
                 labelError.Visible = true;
@@ -246,37 +265,41 @@ namespace Kurs
             }
             labelError.Visible = false;
 
-            if (radioButtonLat.Checked)
+            try
             {
-                // Создание экземпляра окна. Сбор и передача данных от пользователя
-                FormLat formLat = new FormLat(collectData(int.Parse(textBox1.Text)));
-                this.Hide();
-                formLat.ShowDialog();
-                this.Show();
+                var collectedData = collectData(int.Parse(textBox1.Text));
+                if (radioButtonLat.Checked)
+                {
+                    FormLat formLat = new FormLat(collectedData);
+                    this.Hide();
+                    formLat.ShowDialog();
+                    this.Show();
+                }
+                else
+                {
+                    string formPlanTitle = "Полный факторный эксперимент";
+                    string type = "Full";
+                    if (radioButtonRand.Checked)
+                    {
+                        formPlanTitle = "Рандомизированный план";
+                        type = "Rand";
+                    }
+                    else if (radioButtonOne.Checked)
+                    {
+                        formPlanTitle = "Эксперимент с изменением фактора по одному";
+                        type = "One";
+                    }
+
+                    FormPlan formPlan = new FormPlan(collectedData, type);
+                    formPlan.Text = formPlanTitle;
+                    this.Hide();
+                    formPlan.ShowDialog();
+                    this.Show();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Установка имени окна в зависимости от выбранного типа плана
-                string formPlanTitle = "Полный факторный эксперимент";
-                string type = "Full";
-
-                if (radioButtonRand.Checked)
-                {
-                    formPlanTitle = "Рандомизированный план";
-                    type = "Rand";
-                }
-                else if (radioButtonOne.Checked)
-                {
-                    formPlanTitle = "Эксперимент с изменением фактора по одному";
-                    type = "One";
-                }
-
-                // Создание экземпляра окна. Сбор и передача данных
-                FormPlan formPlan = new FormPlan(collectData(int.Parse(textBox1.Text)), type);
-                formPlan.Text = formPlanTitle;
-                this.Hide();
-                formPlan.ShowDialog();
-                this.Show();
+                MessageBox.Show($"Ошибка ввода данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
