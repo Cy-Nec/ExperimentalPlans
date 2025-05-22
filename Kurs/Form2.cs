@@ -13,6 +13,7 @@ namespace Kurs
     public partial class FormPlan : Form
     {
         private int[] levels = null;
+        private FactorData[] factors = null;
 
         // Конструктор для полного, рандомного и плана с изменением по одному
         public FormPlan(FactorData[] dataCollection, string typePlan)
@@ -43,6 +44,7 @@ namespace Kurs
                 buttonGen.Visible = true;
                 textBoxCount.ReadOnly = false;
                 this.levels = dataCollection.Select(d => d.Count).ToArray();
+                this.factors = dataCollection; // Сохраняем массив FactorData[]
             }
             if (typePlan == "One")
             {
@@ -191,15 +193,14 @@ namespace Kurs
             }
 
             int experimentCount;
-            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 500)
+            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 100)
             {
-                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 500.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 100.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             dataPlan.Rows.Clear();
-            FactorData[] factors = this.levels.Select(level => new FactorData(level, Enumerable.Range(1, level).Select(x => (double)x).ToList())).ToArray();
-            generateRandomizedPlan(factors, experimentCount);
+            generateRandomizedPlan(this.factors, experimentCount); // Используем массив FactorData[]
         }
 
         private void GenerateOnePlan(FactorData[] factors)
