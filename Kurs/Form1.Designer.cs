@@ -61,7 +61,6 @@
             this.label1.Size = new System.Drawing.Size(185, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "Количество факторов (1-5):";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // textBox1
             // 

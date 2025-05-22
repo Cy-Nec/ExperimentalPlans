@@ -80,16 +80,6 @@ namespace Kurs
             return true;
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))

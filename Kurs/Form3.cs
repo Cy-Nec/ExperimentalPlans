@@ -16,6 +16,8 @@ namespace Kurs
         private int indexDataGrid = 1;
         private int[] dataCollection;
         private string[] factorNames = { "A", "B", "C", "D", "E" };
+        private int totalGrids = 0;
+
         public FormLat(int[] collectionData)
         {
             InitializeComponent();
@@ -36,78 +38,104 @@ namespace Kurs
 
         private void buttonRight_Click(object sender, EventArgs e)
         {
-            indexDataGrid += 1;
-            if (indexDataGrid > dataCollection.Length-1) indexDataGrid = 1;
-            switch (indexDataGrid)
-            {
-                case 1:
-                    dataGridView1.Visible = true;
-                    dataGridView5.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 2:
-                    dataGridView1.Visible = false;
-                    dataGridView2.Visible = true;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 3:
-                    dataGridView3.Visible = true;
-                    dataGridView2.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 4:
-                    dataGridView4.Visible = true;
-                    dataGridView3.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 5:
-                    dataGridView5.Visible = true;
-                    dataGridView4.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-            }
+            if (totalGrids == 0) return;
+
+            indexDataGrid = (indexDataGrid + 1) % totalGrids;
+            ShowGrid(indexDataGrid);
         }
 
         private void buttonLeft_Click(object sender, EventArgs e)
         {
-            indexDataGrid -= 1;
-            if (indexDataGrid < 1) indexDataGrid = dataCollection.Length - 1;
-            switch (indexDataGrid)
-            {
-                case 1:
-                    dataGridView1.Visible = true;
-                    dataGridView2.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 2:
-                    dataGridView3.Visible = false;
-                    dataGridView2.Visible = true;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 3:
-                    dataGridView3.Visible = true;
-                    dataGridView4.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 4:
-                    dataGridView4.Visible = true;
-                    dataGridView5.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-                case 5:
-                    dataGridView5.Visible = true;
-                    dataGridView1.Visible = false;
-                    label1.Text = $"План эксперимента №{indexDataGrid}";
-                    break;
-            }
+            if (totalGrids == 0) return;
+
+            indexDataGrid = (indexDataGrid - 1 + totalGrids) % totalGrids;
+            ShowGrid(indexDataGrid);
+        }
+
+
+        private void listBoxBasic_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            listBoxExtra.Items.Clear();
+
+            int basicFactorIndex = listBoxBasic.SelectedIndex;
+            int basicFactorLevels = dataCollection[basicFactorIndex];
+
+            for (int i = 0; i < dataCollection.Length; i++)
+                if (i != basicFactorIndex)
+                {
+                    string item = $"{factorNames[i]}: {basicFactorLevels}";
+                    listBoxExtra.Items.Add(item);
+                }
         }
 
         private void buttonGen_Click(object sender, EventArgs e)
         {
-            
+            if (listBoxBasic.SelectedIndex == -1 || listBoxExtra.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите первичный и вторичный фактор.");
+                return;
+            }
+
+            ClearDataGridViews();
+
+            int basicIndex = listBoxBasic.SelectedIndex;
+            string primaryFactor = factorNames[basicIndex];
+            int levelCount = dataCollection[basicIndex];
+
+            string rowFactor = listBoxExtra.SelectedItem.ToString().Split(':')[0];
+
+            List<string> columnFactors = new List<string>();
+            foreach (var item in listBoxExtra.Items)
+            {
+                string factor = item.ToString().Split(':')[0];
+                if (factor != rowFactor)
+                    columnFactors.Add(factor);
+            }
+
+            int gridIndex = 0;
+            foreach (string colFactor in columnFactors)
+            {
+                if (gridIndex >= 3) break;
+                string[,] square = GenerateLatinSquare(levelCount, primaryFactor);
+                DataGridView grid = GetDataGridView(gridIndex);
+
+                grid.Columns.Clear();
+                grid.Rows.Clear();
+                grid.RowHeadersVisible = true;
+
+                for (int i = 0; i < levelCount; i++)
+                    grid.Columns.Add($"col{i}", $"{colFactor}{i + 1}");
+
+                for (int i = 0; i < levelCount; i++)
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.CreateCells(grid);
+                    for (int j = 0; j < levelCount; j++)
+                        row.Cells[j].Value = square[i, j];
+                    row.HeaderCell.Value = $"{rowFactor}{i + 1}";
+                    grid.Rows.Add(row);
+                }
+
+                grid.Visible = true;
+                gridIndex++;
+            }
+
+            indexDataGrid = 0;
+            ShowGrid(indexDataGrid);
+            label1.Text = "План эксперимента №1";
+            totalGrids = columnFactors.Count > 3 ? 3 : columnFactors.Count;
+
         }
 
-        // Метод для получения соответствующего DataGridView по индексу
+        private string[,] GenerateLatinSquare(int n, string symbol)
+        {
+            string[,] square = new string[n, n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    square[i, j] = $"{symbol}{((i + j) % n) + 1}";
+            return square;
+        }
+
         private DataGridView GetDataGridView(int index)
         {
             switch (index)
@@ -115,24 +143,32 @@ namespace Kurs
                 case 0: return dataGridView1;
                 case 1: return dataGridView2;
                 case 2: return dataGridView3;
-                case 3: return dataGridView4;
-                case 4: return dataGridView5;
-                default: throw new ArgumentException("Недопустимый индекс DataGridView.");
+                default: throw new ArgumentException("Недопустимый индекс DataGridView");
             }
+        }
+
+        private void HideAllGrids()
+        {
+            dataGridView1.Visible = false;
+            dataGridView2.Visible = false;
+            dataGridView3.Visible = false;
+        }
+
+        private void ShowGrid(int index)
+        {
+            HideAllGrids();
+            GetDataGridView(index).Visible = true;
+            label1.Text = $"План эксперимента №{index + 1}";
         }
 
         private void ClearDataGridViews()
         {
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
-            dataGridView2.Rows.Clear();
-            dataGridView2.Columns.Clear();
-            dataGridView3.Rows.Clear();
-            dataGridView3.Columns.Clear();
-            dataGridView4.Rows.Clear();
-            dataGridView4.Columns.Clear();
-            dataGridView5.Rows.Clear();
-            dataGridView5.Columns.Clear();
+            foreach (var grid in new[] { dataGridView1, dataGridView2, dataGridView3 })
+            {
+                grid.Rows.Clear();
+                grid.Columns.Clear();
+                grid.Visible = false;
+            }
         }
     }
 }
