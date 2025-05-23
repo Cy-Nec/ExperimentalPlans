@@ -13,15 +13,20 @@ namespace Kurs
 {
     public partial class FormLat : Form
     {
+        private int totalExperiments = 0;
         private int indexDataGrid = 1;
         private int[] dataCollection;
         private string[] factorNames = { "A", "B", "C", "D", "E" };
         private int totalGrids = 0;
 
+        private FactorData[] factors = null;
+
         public FormLat(FactorData[] collectionData)
         {
             InitializeComponent();
-            this.dataCollection = collectionData.Select(d => d.Count).ToArray(); 
+            this.factors = collectionData; // Сохраняем массив FactorData[]
+            this.dataCollection = collectionData.Select(d => d.Count).ToArray(); // Извлекаем количество уровней
+
             for (int i = 0; i < collectionData.Length; i++)
             {
                 string item = $"{factorNames[i]}: {dataCollection[i]}";
@@ -29,6 +34,21 @@ namespace Kurs
             }
         }
 
+        // Функции отображения полей для показа данных
+        private void HideAllGrids()
+        {
+            dataGridView1.Visible = false;
+            dataGridView2.Visible = false;
+            dataGridView3.Visible = false;
+        }
+        private void ShowGrid(int index)
+        {
+            HideAllGrids();
+            GetDataGridView(index).Visible = true;
+            label1.Text = $"План эксперимента №{index + 1}";
+        }
+
+        // Блок взаимодействия с интерфейсом
         private void buttonBack_Click(object sender, EventArgs e)
         {
             FormBase formBase = new FormBase();
@@ -51,22 +71,6 @@ namespace Kurs
             ShowGrid(indexDataGrid);
         }
 
-
-        private void listBoxBasic_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            listBoxExtra.Items.Clear();
-
-            int basicFactorIndex = listBoxBasic.SelectedIndex;
-            int basicFactorLevels = dataCollection[basicFactorIndex];
-
-            for (int i = 0; i < dataCollection.Length; i++)
-                if (i != basicFactorIndex)
-                {
-                    string item = $"{factorNames[i]}: {basicFactorLevels}";
-                    listBoxExtra.Items.Add(item);
-                }
-        }
-
         private void buttonGen_Click(object sender, EventArgs e)
         {
             if (listBoxBasic.SelectedIndex == -1 || listBoxExtra.SelectedIndex == -1)
@@ -81,6 +85,9 @@ namespace Kurs
             string primaryFactor = factorNames[basicIndex];
             int levelCount = dataCollection[basicIndex];
 
+            // Получение значения уровней для основного фактора
+            List<double> primaryValues = factors[basicIndex].Values;
+
             string rowFactor = listBoxExtra.SelectedItem.ToString().Split(':')[0];
 
             List<string> columnFactors = new List<string>();
@@ -91,11 +98,16 @@ namespace Kurs
                     columnFactors.Add(factor);
             }
 
+            totalExperiments = 0; // Сброс счетчика экспериментов
+
             int gridIndex = 0;
             foreach (string colFactor in columnFactors)
             {
                 if (gridIndex >= 3) break;
-                string[,] square = GenerateLatinSquare(levelCount, primaryFactor);
+
+                // Генерация латинского квадрата
+                string[,] square = GenerateLatinSquare(levelCount, primaryValues);
+
                 DataGridView grid = GetDataGridView(gridIndex);
 
                 grid.Columns.Clear();
@@ -117,6 +129,9 @@ namespace Kurs
 
                 grid.Visible = true;
                 gridIndex++;
+
+                // Подсчет экспериментов для текущего квадрата
+                totalExperiments += levelCount * levelCount;
             }
 
             indexDataGrid = 0;
@@ -124,14 +139,20 @@ namespace Kurs
             label1.Text = "План эксперимента №1";
             totalGrids = columnFactors.Count > 3 ? 3 : columnFactors.Count;
 
+            // Вывод общего количества экспериментов
+            textBoxCount.Text = totalExperiments.ToString();
         }
 
-        private string[,] GenerateLatinSquare(int n, string symbol)
+        private string[,] GenerateLatinSquare(int n, List<double> values)
         {
             string[,] square = new string[n, n];
             for (int i = 0; i < n; i++)
+            {
                 for (int j = 0; j < n; j++)
-                    square[i, j] = $"{symbol}{((i + j) % n) + 1}";
+                {
+                    square[i, j] = values[(i + j) % n].ToString();
+                }
+            }
             return square;
         }
 
@@ -146,18 +167,20 @@ namespace Kurs
             }
         }
 
-        private void HideAllGrids()
+        // Функция выбора базового фактора
+        private void listBoxBasic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dataGridView1.Visible = false;
-            dataGridView2.Visible = false;
-            dataGridView3.Visible = false;
-        }
+            listBoxExtra.Items.Clear();
 
-        private void ShowGrid(int index)
-        {
-            HideAllGrids();
-            GetDataGridView(index).Visible = true;
-            label1.Text = $"План эксперимента №{index + 1}";
+            int basicFactorIndex = listBoxBasic.SelectedIndex;
+            int basicFactorLevels = dataCollection[basicFactorIndex];
+
+            for (int i = 0; i < dataCollection.Length; i++)
+                if (i != basicFactorIndex)
+                {
+                    string item = $"{factorNames[i]}: {basicFactorLevels}";
+                    listBoxExtra.Items.Add(item);
+                }
         }
 
         private void ClearDataGridViews()

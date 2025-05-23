@@ -171,7 +171,6 @@
             this.textBoxA.Size = new System.Drawing.Size(93, 20);
             this.textBoxA.TabIndex = 12;
             this.textBoxA.Visible = false;
-            this.textBoxA.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxA_KeyPress);
             // 
             // textBoxB
             // 
@@ -180,7 +179,6 @@
             this.textBoxB.Size = new System.Drawing.Size(93, 20);
             this.textBoxB.TabIndex = 14;
             this.textBoxB.Visible = false;
-            this.textBoxB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxB_KeyPress);
             // 
             // labelB
             // 
@@ -200,7 +198,6 @@
             this.textBoxC.Size = new System.Drawing.Size(93, 20);
             this.textBoxC.TabIndex = 16;
             this.textBoxC.Visible = false;
-            this.textBoxC.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxC_KeyPress);
             // 
             // labelC
             // 
@@ -220,7 +217,6 @@
             this.textBoxD.Size = new System.Drawing.Size(83, 20);
             this.textBoxD.TabIndex = 18;
             this.textBoxD.Visible = false;
-            this.textBoxD.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxD_KeyPress);
             // 
             // labelD
             // 
@@ -240,7 +236,6 @@
             this.textBoxE.Size = new System.Drawing.Size(83, 20);
             this.textBoxE.TabIndex = 20;
             this.textBoxE.Visible = false;
-            this.textBoxE.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxE_KeyPress);
             // 
             // labelE
             // 

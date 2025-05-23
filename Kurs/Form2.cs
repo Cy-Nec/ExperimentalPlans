@@ -153,17 +153,6 @@ namespace Kurs
         {
             if (!(e.KeyChar >= '0' && e.KeyChar <= '9' || e.KeyChar == (char)8))
                 e.KeyChar = (char)0;
-
-            //if (textBoxCount.Text.Length >= 2 && e.KeyChar != (char)8)
-            //    e.KeyChar = (char)0;
-
-            //List<string> numbers = new List<string> { "6", "7", "8", "9" };
-            //foreach (string number in numbers)
-            //    if (textBoxCount.Text == number && e.KeyChar != (char)8)
-            //        e.KeyChar = (char)0;
-
-            //if (textBoxCount.Text == "5" && e.KeyChar != '0' && e.KeyChar != (char)8)
-            //    e.KeyChar = (char)0;
         }
 
         private void generateRandomizedPlan(FactorData[] factors, int experimentCount)
@@ -193,14 +182,14 @@ namespace Kurs
             }
 
             int experimentCount;
-            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 100)
+            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 500)
             {
-                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 100.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 500.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             dataPlan.Rows.Clear();
-            generateRandomizedPlan(this.factors, experimentCount); // Используем массив FactorData[]
+            generateRandomizedPlan(this.factors, experimentCount);
         }
 
         private void GenerateOnePlan(FactorData[] factors)

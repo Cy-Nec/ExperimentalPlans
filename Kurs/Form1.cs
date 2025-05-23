@@ -100,6 +100,7 @@ namespace Kurs
             return true;
         }
 
+        // Ограничение ввода данных в поле количество уровней
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
@@ -112,6 +113,7 @@ namespace Kurs
             }
         }
 
+        // Кнопка отображения полей ввода
         private void button1_Click(object sender, EventArgs e)
         {
             if ((radioButtonFull.Checked || radioButtonRand.Checked || radioButtonOne.Checked || radioButtonLat.Checked)
@@ -152,78 +154,6 @@ namespace Kurs
                 }
             }
         }
-        
-        // Блок защиты от некорректного ввода
-        private void textBoxA_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxA.Text.Length >= 1 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
-
-        private void textBoxD_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxD.Text.Length >= 1 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
-
-        private void textBoxB_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxB.Text.Length >= 1 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
-
-        private void textBoxC_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxC.Text.Length >= 1 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
-
-        private void textBoxE_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxE.Text.Length >= 1 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
-        private void textBoxCount_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //if (!(e.KeyChar >= '0' && e.KeyChar <= '9' || e.KeyChar == (char)8))
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-            //if (textBoxE.Text.Length >= 2 && e.KeyChar != (char)8)
-            //{
-            //    e.KeyChar = (char)0;
-            //}
-        }
 
         // Блок отслеживания изменения состояния всех radioButton
         private void radioButtonFull_CheckedChanged(object sender, EventArgs e)
@@ -256,6 +186,8 @@ namespace Kurs
             visibleOff();
         }
 
+
+        // Кнопка создания плана
         private void buttonPlan_Click(object sender, EventArgs e)
         {
             if (!areaIsFill())
@@ -303,6 +235,7 @@ namespace Kurs
             }
         }
 
+        // Кнопка для дробного плана
         private void buttonFractional_Click(object sender, EventArgs e)
         {
             // Создание экземпляра окна 
