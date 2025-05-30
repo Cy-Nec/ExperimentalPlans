@@ -9,18 +9,6 @@ using System.Windows.Forms;
 
 namespace Kurs
 {
-    public class FactorData
-    {
-        public int Count { get; set; }
-        public List<double> Values { get; set; }
-
-        public FactorData(int count, List<double> values)
-        {
-            Count = count;
-            Values = values;
-        }
-    }
-
     public partial class FormBase : Form
     {
         public FormBase()
@@ -93,10 +81,8 @@ namespace Kurs
             List<TextBox> visibleTextBox = new List<TextBox> {textBoxA, textBoxB, textBoxC, textBoxD, textBoxE};
 
             foreach (var textBox in visibleTextBox)
-            {
                 if (textBox.Visible && string.IsNullOrEmpty(textBox.Text)) 
                     return false;
-            }
             return true;
         }
 
@@ -186,7 +172,6 @@ namespace Kurs
             visibleOff();
         }
 
-
         // Кнопка создания плана
         private void buttonPlan_Click(object sender, EventArgs e)
         {
@@ -244,6 +229,18 @@ namespace Kurs
             this.Hide();
             formPlan.ShowDialog();
             this.Show();
+        }
+    }
+
+    public class FactorData
+    {
+        public int Count { get; set; }
+        public List<double> Values { get; set; }
+
+        public FactorData(int count, List<double> values)
+        {
+            Count = count;
+            Values = values;
         }
     }
 }

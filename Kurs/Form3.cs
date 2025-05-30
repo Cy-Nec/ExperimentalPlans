@@ -98,7 +98,7 @@ namespace Kurs
                     columnFactors.Add(factor);
             }
 
-            totalExperiments = 0; // Сброс счетчика экспериментов
+            totalExperiments = 0; // Сброс счётчика экспериментов
 
             int gridIndex = 0;
             foreach (string colFactor in columnFactors)
@@ -190,6 +190,64 @@ namespace Kurs
                 grid.Rows.Clear();
                 grid.Columns.Clear();
                 grid.Visible = false;
+            }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            // Проверка на наличие данных в таблицах
+            if (totalGrids == 0)
+            {
+                MessageBox.Show("Нет данных для сохранения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Открытие диалога сохранения файла
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                saveFileDialog.Title = "Сохранить все планы в CSV";
+                saveFileDialog.DefaultExt = "csv";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveFileDialog.FileName))
+                        {
+                            // Проходим по всем видимым DataGridView
+                            for (int i = 0; i < totalGrids; i++)
+                            {
+                                DataGridView grid = GetDataGridView(i);
+
+                                // Запись заголовка плана
+                                writer.WriteLine($"План эксперимента №{i + 1}");
+
+                                // Запись заголовков столбцов
+                                var headers = new List<string> { "Фактор" };
+                                headers.AddRange(grid.Columns.Cast<DataGridViewColumn>().Select(column => column.HeaderText));
+                                writer.WriteLine(string.Join(";", headers.ToArray())); // Преобразуем в массив
+
+                                // Запись данных строк
+                                foreach (DataGridViewRow row in grid.Rows)
+                                {
+                                    var rowData = new List<string> { row.HeaderCell.Value?.ToString() ?? "" }; // Название строки
+                                    rowData.AddRange(row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? ""));
+                                    writer.WriteLine(string.Join(";", rowData.ToArray())); // Преобразуем в массив
+                                }
+
+                                // Разделение между планами
+                                writer.WriteLine(); // Пустая строка
+                            }
+                        }
+
+                        MessageBox.Show("Все планы успешно сохранены в CSV.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
     }

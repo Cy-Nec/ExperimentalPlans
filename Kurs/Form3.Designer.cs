@@ -35,7 +35,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listBoxBasic = new System.Windows.Forms.ListBox();
             this.buttonBack = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.buttonGen = new System.Windows.Forms.Button();
             this.listBoxExtra = new System.Windows.Forms.ListBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -116,14 +116,15 @@
             this.buttonBack.UseVisualStyleBackColor = true;
             this.buttonBack.Click += new System.EventHandler(this.buttonBack_Click);
             // 
-            // button2
+            // buttonSave
             // 
-            this.button2.Location = new System.Drawing.Point(473, 385);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(91, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Сохранить";
-            this.button2.UseVisualStyleBackColor = true;
+            this.buttonSave.Location = new System.Drawing.Point(473, 385);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(91, 23);
+            this.buttonSave.TabIndex = 7;
+            this.buttonSave.Text = "Сохранить";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // buttonGen
             // 
@@ -208,7 +209,7 @@
             this.Controls.Add(this.listBoxExtra);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.buttonGen);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.buttonBack);
             this.Controls.Add(this.listBoxBasic);
             this.Controls.Add(this.label3);
@@ -235,7 +236,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListBox listBoxBasic;
         private System.Windows.Forms.Button buttonBack;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonGen;
         private System.Windows.Forms.ListBox listBoxExtra;
         private System.Windows.Forms.Label label4;

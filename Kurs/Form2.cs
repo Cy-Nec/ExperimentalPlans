@@ -210,6 +210,7 @@ namespace Kurs
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            // Проверка на наличие данных в таблице
             if (dataPlan.Rows.Count == 0)
             {
                 MessageBox.Show("Нет данных для сохранения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -219,9 +220,9 @@ namespace Kurs
             // Открытие диалога сохранения файла
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.Title = "Сохранить план эксперимента";
-                saveFileDialog.DefaultExt = "txt";
+                saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                saveFileDialog.Title = "Сохранить данные в CSV";
+                saveFileDialog.DefaultExt = "csv";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -229,19 +230,23 @@ namespace Kurs
                     {
                         using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveFileDialog.FileName))
                         {
-                            writer.WriteLine($"Тип плана: {(levels != null ? "Рандомизированный" : "Дробный")}");
-                            writer.WriteLine($"Количество экспериментов: {textBoxCount.Text}");
+                            // Запись заголовков столбцов
+                            var headers = dataPlan.Columns.Cast<DataGridViewColumn>()
+                                                         .Select(column => column.HeaderText)
+                                                         .ToArray();
+                            writer.WriteLine(string.Join(";", headers));
 
-                            var headers = dataPlan.Columns.Cast<DataGridViewColumn>().Select(column => column.HeaderText).ToArray();
-                            writer.WriteLine(string.Join("\t", headers));
-
+                            // Запись данных строк
                             foreach (DataGridViewRow row in dataPlan.Rows)
                             {
-                                var rowData = row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? "").ToArray();
-                                writer.WriteLine(string.Join("\t", rowData));
+                                var rowData = row.Cells.Cast<DataGridViewCell>()
+                                                       .Select(cell => cell.Value?.ToString() ?? "")
+                                                       .ToArray();
+                                writer.WriteLine(string.Join(";", rowData));
                             }
                         }
-                        MessageBox.Show("План успешно сохранен.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        MessageBox.Show("Данные успешно сохранены в CSV.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
