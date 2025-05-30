@@ -13,23 +13,42 @@ namespace Kurs
 {
     public partial class FormLat : Form
     {
+        private int totalExperiments = 0;
         private int indexDataGrid = 1;
         private int[] dataCollection;
         private string[] factorNames = { "A", "B", "C", "D", "E" };
         private int totalGrids = 0;
 
-        public FormLat(int[] collectionData)
+        private FactorData[] factors = null;
+
+        public FormLat(FactorData[] collectionData)
         {
             InitializeComponent();
-            this.dataCollection = collectionData;
+            this.factors = collectionData; // Сохраняем массив FactorData[]
+            this.dataCollection = collectionData.Select(d => d.Count).ToArray(); // Извлекаем количество уровней
 
-            for (int i = 0; i < dataCollection.Length; i++)
+            for (int i = 0; i < collectionData.Length; i++)
             {
                 string item = $"{factorNames[i]}: {dataCollection[i]}";
                 listBoxBasic.Items.Add(item);
             }
         }
 
+        // Функции отображения полей для показа данных
+        private void HideAllGrids()
+        {
+            dataGridView1.Visible = false;
+            dataGridView2.Visible = false;
+            dataGridView3.Visible = false;
+        }
+        private void ShowGrid(int index)
+        {
+            HideAllGrids();
+            GetDataGridView(index).Visible = true;
+            label1.Text = $"План эксперимента №{index + 1}";
+        }
+
+        // Блок взаимодействия с интерфейсом
         private void buttonBack_Click(object sender, EventArgs e)
         {
             FormBase formBase = new FormBase();
@@ -52,22 +71,6 @@ namespace Kurs
             ShowGrid(indexDataGrid);
         }
 
-
-        private void listBoxBasic_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            listBoxExtra.Items.Clear();
-
-            int basicFactorIndex = listBoxBasic.SelectedIndex;
-            int basicFactorLevels = dataCollection[basicFactorIndex];
-
-            for (int i = 0; i < dataCollection.Length; i++)
-                if (i != basicFactorIndex)
-                {
-                    string item = $"{factorNames[i]}: {basicFactorLevels}";
-                    listBoxExtra.Items.Add(item);
-                }
-        }
-
         private void buttonGen_Click(object sender, EventArgs e)
         {
             if (listBoxBasic.SelectedIndex == -1 || listBoxExtra.SelectedIndex == -1)
@@ -82,6 +85,9 @@ namespace Kurs
             string primaryFactor = factorNames[basicIndex];
             int levelCount = dataCollection[basicIndex];
 
+            // Получение значения уровней для основного фактора
+            List<double> primaryValues = factors[basicIndex].Values;
+
             string rowFactor = listBoxExtra.SelectedItem.ToString().Split(':')[0];
 
             List<string> columnFactors = new List<string>();
@@ -92,11 +98,16 @@ namespace Kurs
                     columnFactors.Add(factor);
             }
 
+            totalExperiments = 0; // Сброс счётчика экспериментов
+
             int gridIndex = 0;
             foreach (string colFactor in columnFactors)
             {
                 if (gridIndex >= 3) break;
-                string[,] square = GenerateLatinSquare(levelCount, primaryFactor);
+
+                // Генерация латинского квадрата
+                string[,] square = GenerateLatinSquare(levelCount, primaryValues);
+
                 DataGridView grid = GetDataGridView(gridIndex);
 
                 grid.Columns.Clear();
@@ -118,6 +129,9 @@ namespace Kurs
 
                 grid.Visible = true;
                 gridIndex++;
+
+                // Подсчет экспериментов для текущего квадрата
+                totalExperiments += levelCount * levelCount;
             }
 
             indexDataGrid = 0;
@@ -125,14 +139,20 @@ namespace Kurs
             label1.Text = "План эксперимента №1";
             totalGrids = columnFactors.Count > 3 ? 3 : columnFactors.Count;
 
+            // Вывод общего количества экспериментов
+            textBoxCount.Text = totalExperiments.ToString();
         }
 
-        private string[,] GenerateLatinSquare(int n, string symbol)
+        private string[,] GenerateLatinSquare(int n, List<double> values)
         {
             string[,] square = new string[n, n];
             for (int i = 0; i < n; i++)
+            {
                 for (int j = 0; j < n; j++)
-                    square[i, j] = $"{symbol}{((i + j) % n) + 1}";
+                {
+                    square[i, j] = values[(i + j) % n].ToString();
+                }
+            }
             return square;
         }
 
@@ -147,18 +167,20 @@ namespace Kurs
             }
         }
 
-        private void HideAllGrids()
+        // Функция выбора базового фактора
+        private void listBoxBasic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dataGridView1.Visible = false;
-            dataGridView2.Visible = false;
-            dataGridView3.Visible = false;
-        }
+            listBoxExtra.Items.Clear();
 
-        private void ShowGrid(int index)
-        {
-            HideAllGrids();
-            GetDataGridView(index).Visible = true;
-            label1.Text = $"План эксперимента №{index + 1}";
+            int basicFactorIndex = listBoxBasic.SelectedIndex;
+            int basicFactorLevels = dataCollection[basicFactorIndex];
+
+            for (int i = 0; i < dataCollection.Length; i++)
+                if (i != basicFactorIndex)
+                {
+                    string item = $"{factorNames[i]}: {basicFactorLevels}";
+                    listBoxExtra.Items.Add(item);
+                }
         }
 
         private void ClearDataGridViews()
@@ -168,6 +190,64 @@ namespace Kurs
                 grid.Rows.Clear();
                 grid.Columns.Clear();
                 grid.Visible = false;
+            }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            // Проверка на наличие данных в таблицах
+            if (totalGrids == 0)
+            {
+                MessageBox.Show("Нет данных для сохранения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Открытие диалога сохранения файла
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                saveFileDialog.Title = "Сохранить все планы в CSV";
+                saveFileDialog.DefaultExt = "csv";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveFileDialog.FileName))
+                        {
+                            // Проходим по всем видимым DataGridView
+                            for (int i = 0; i < totalGrids; i++)
+                            {
+                                DataGridView grid = GetDataGridView(i);
+
+                                // Запись заголовка плана
+                                writer.WriteLine($"План эксперимента №{i + 1}");
+
+                                // Запись заголовков столбцов
+                                var headers = new List<string> { "Фактор" };
+                                headers.AddRange(grid.Columns.Cast<DataGridViewColumn>().Select(column => column.HeaderText));
+                                writer.WriteLine(string.Join(";", headers.ToArray())); // Преобразуем в массив
+
+                                // Запись данных строк
+                                foreach (DataGridViewRow row in grid.Rows)
+                                {
+                                    var rowData = new List<string> { row.HeaderCell.Value?.ToString() ?? "" }; // Название строки
+                                    rowData.AddRange(row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? ""));
+                                    writer.WriteLine(string.Join(";", rowData.ToArray())); // Преобразуем в массив
+                                }
+
+                                // Разделение между планами
+                                writer.WriteLine(); // Пустая строка
+                            }
+                        }
+
+                        MessageBox.Show("Все планы успешно сохранены в CSV.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
     }

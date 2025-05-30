@@ -13,17 +13,16 @@ namespace Kurs
     public partial class FormPlan : Form
     {
         private int[] levels = null;
+        private FactorData[] factors = null;
 
         // Конструктор для полного, рандомного и плана с изменением по одному
-        public FormPlan(int[] dataCollection, string typePlan)
+        public FormPlan(FactorData[] dataCollection, string typePlan)
         {
             InitializeComponent();
-
             dataPlan.Columns.Add("ExperimentNumber", "№");
             dataPlan.Columns["ExperimentNumber"].Width = 40;
 
             string[] factorNames = { "A", "B", "C", "D", "E" };
-
             for (int i = 0; i < dataCollection.Length; i++)
             {
                 string columnName = factorNames[i].ToString();
@@ -34,32 +33,25 @@ namespace Kurs
             if (typePlan == "Full")
             {
                 List<List<string>> allCombinations = GenerateAllCombinations(dataCollection);
-
-                // Вывод комбинаций
                 foreach (var combination in allCombinations)
                     addDataPlan(combination);
-
                 textBoxCount.Text = allCombinations.Count.ToString();
             }
-
             if (typePlan == "Rand")
             {
-                // Сдвиг label и изменение текста
                 labelCount.Location = new Point(labelCount.Location.X - 70, labelCount.Location.Y);
                 labelCount.Text = "Введите количество экспериментов:";
                 buttonGen.Visible = true;
-
-                this.levels = dataCollection;
                 textBoxCount.ReadOnly = false;
+                this.levels = dataCollection.Select(d => d.Count).ToArray();
+                this.factors = dataCollection; // Сохраняем массив FactorData[]
             }
-
             if (typePlan == "One")
             {
                 GenerateOnePlan(dataCollection);
-
                 int experimentCount = 0;
-                foreach (int level in dataCollection)
-                    experimentCount += level;
+                foreach (var factor in dataCollection)
+                    experimentCount += factor.Count;
                 textBoxCount.Text = experimentCount.ToString();
             }
         }
@@ -119,26 +111,26 @@ namespace Kurs
             return allCombinations;
         }
 
-        private List<List<string>> GenerateAllCombinations(int[] levels)
+        private List<List<string>> GenerateAllCombinations(FactorData[] factors)
         {
             List<List<string>> allCombinations = new List<List<string>>();
             List<string> currentCombination = new List<string>();
-            GenerateCombinationsRecursive(levels, 0, currentCombination, allCombinations);
+            GenerateCombinationsRecursive(factors, 0, currentCombination, allCombinations);
             return allCombinations;
         }
 
-        private void GenerateCombinationsRecursive(int[] levels, int currentFactorIndex, List<string> currentCombination, List<List<string>> allCombinations)
+        private void GenerateCombinationsRecursive(FactorData[] factors, int currentFactorIndex, List<string> currentCombination, List<List<string>> allCombinations)
         {
-            if (currentFactorIndex == levels.Length)
+            if (currentFactorIndex == factors.Length)
             {
                 allCombinations.Add(new List<string>(currentCombination));
                 return;
             }
 
-            for (int level = 1; level <= levels[currentFactorIndex]; level++)
+            foreach (var value in factors[currentFactorIndex].Values)
             {
-                currentCombination.Add(level.ToString());
-                GenerateCombinationsRecursive(levels, currentFactorIndex + 1, currentCombination, allCombinations);
+                currentCombination.Add(value.ToString());
+                GenerateCombinationsRecursive(factors, currentFactorIndex + 1, currentCombination, allCombinations);
                 currentCombination.RemoveAt(currentCombination.Count - 1);
             }
         }
@@ -161,34 +153,22 @@ namespace Kurs
         {
             if (!(e.KeyChar >= '0' && e.KeyChar <= '9' || e.KeyChar == (char)8))
                 e.KeyChar = (char)0;
-
-            //if (textBoxCount.Text.Length >= 2 && e.KeyChar != (char)8)
-            //    e.KeyChar = (char)0;
-
-            //List<string> numbers = new List<string> { "6", "7", "8", "9" };
-            //foreach (string number in numbers)
-            //    if (textBoxCount.Text == number && e.KeyChar != (char)8)
-            //        e.KeyChar = (char)0;
-
-            //if (textBoxCount.Text == "5" && e.KeyChar != '0' && e.KeyChar != (char)8)
-            //    e.KeyChar = (char)0;
         }
 
-        private void generateRandomizedPlan(int[] levels, int experimentCount)
+        private void generateRandomizedPlan(FactorData[] factors, int experimentCount)
         {
-            List<List<string>> allCombinations = GenerateAllCombinations(levels);
+            List<List<string>> allCombinations = GenerateAllCombinations(factors);
 
             // Проверка, что количество запрашиваемых экспериментов не превышает общее число комбинаций
             if (experimentCount > allCombinations.Count)
             {
-                MessageBox.Show("Количество экспериментов превышает общее число возможных комбинаций.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Количество экспериментов превышает общее число возможных комбинаций ({allCombinations.Count}).", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             // Случайный выбор комбинаций
             Random random = new Random();
             List<List<string>> selectedCombinations = allCombinations.OrderBy(x => random.Next()).Take(experimentCount).ToList();
-
             foreach (var combination in selectedCombinations)
                 addDataPlan(combination);
         }
@@ -202,35 +182,35 @@ namespace Kurs
             }
 
             int experimentCount;
-            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 100)
+            if (!int.TryParse(textBoxCount.Text, out experimentCount) || experimentCount < 1 || experimentCount > 500)
             {
-                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 100.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Количество экспериментов должно быть числом от 1 до 500.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             dataPlan.Rows.Clear();
-            int[] levels = this.levels;
-
-            generateRandomizedPlan(levels, experimentCount);
+            generateRandomizedPlan(this.factors, experimentCount);
         }
 
-        private void GenerateOnePlan(int[] levels)
+        private void GenerateOnePlan(FactorData[] factors)
         {
             // Фиксированные значения для всех факторов
-            List<string> fixedValues = levels.Select(level => "1").ToList();
+            List<string> fixedValues = factors.Select(factor => factor.Values[0].ToString()).ToList();
 
-            for (int factorIndex = 0; factorIndex < levels.Length; factorIndex++)
-                for (int level = 1; level <= levels[factorIndex]; level++)
+            for (int factorIndex = 0; factorIndex < factors.Length; factorIndex++)
+            {
+                foreach (var level in factors[factorIndex].Values)
                 {
                     List<string> combination = new List<string>(fixedValues);
                     combination[factorIndex] = level.ToString();
-
                     addDataPlan(combination);
                 }
+            }
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            // Проверка на наличие данных в таблице
             if (dataPlan.Rows.Count == 0)
             {
                 MessageBox.Show("Нет данных для сохранения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -240,9 +220,9 @@ namespace Kurs
             // Открытие диалога сохранения файла
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.Title = "Сохранить план эксперимента";
-                saveFileDialog.DefaultExt = "txt";
+                saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                saveFileDialog.Title = "Сохранить данные в CSV";
+                saveFileDialog.DefaultExt = "csv";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -250,19 +230,23 @@ namespace Kurs
                     {
                         using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveFileDialog.FileName))
                         {
-                            writer.WriteLine($"Тип плана: {(levels != null ? "Рандомизированный" : "Дробный")}");
-                            writer.WriteLine($"Количество экспериментов: {textBoxCount.Text}");
+                            // Запись заголовков столбцов
+                            var headers = dataPlan.Columns.Cast<DataGridViewColumn>()
+                                                         .Select(column => column.HeaderText)
+                                                         .ToArray();
+                            writer.WriteLine(string.Join(";", headers));
 
-                            var headers = dataPlan.Columns.Cast<DataGridViewColumn>().Select(column => column.HeaderText).ToArray();
-                            writer.WriteLine(string.Join("\t", headers));
-
+                            // Запись данных строк
                             foreach (DataGridViewRow row in dataPlan.Rows)
                             {
-                                var rowData = row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? "").ToArray();
-                                writer.WriteLine(string.Join("\t", rowData));
+                                var rowData = row.Cells.Cast<DataGridViewCell>()
+                                                       .Select(cell => cell.Value?.ToString() ?? "")
+                                                       .ToArray();
+                                writer.WriteLine(string.Join(";", rowData));
                             }
                         }
-                        MessageBox.Show("План успешно сохранен.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        MessageBox.Show("Данные успешно сохранены в CSV.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
