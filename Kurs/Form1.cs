@@ -89,10 +89,15 @@ namespace Kurs
         // Ограничение ввода данных в поле количество уровней
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+            if (radioButtonLat.Checked)
             {
-                e.KeyChar = (char)0;
+                if (!(e.KeyChar >= '3' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
             }
+            else
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                        e.KeyChar = (char)0;
+
             if (textBox1.Text.Length >= 1 && e.KeyChar != (char)8)
             {
                 e.KeyChar = (char)0;
