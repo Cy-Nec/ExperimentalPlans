@@ -104,11 +104,70 @@ namespace Kurs
             }
         }
 
+        private void textBoxA_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (radioButtonFractional.Checked && textBoxA.Text == "")
+                if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxA.Text == ""))
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+        }
+        private void textBoxB_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (radioButtonFractional.Checked && textBoxB.Text == "")
+                if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxB.Text == ""))
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+        }
+        private void textBoxC_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (radioButtonFractional.Checked && textBoxC.Text == "")
+                if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxC.Text == ""))
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+        }
+        private void textBoxD_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (radioButtonFractional.Checked && textBoxD.Text == "")
+                if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxD.Text == ""))
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+        }
+        private void textBoxE_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (radioButtonFractional.Checked && textBoxE.Text == "")
+                if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxE.Text == ""))
+                if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+        }
+
         // Кнопка отображения полей ввода
         private void button1_Click(object sender, EventArgs e)
         {
-            if ((radioButtonFull.Checked || radioButtonRand.Checked || radioButtonOne.Checked || radioButtonLat.Checked)
-                && int.TryParse(textBox1.Text, out int factorCount))
+            if ((radioButtonFull.Checked || radioButtonRand.Checked 
+               || radioButtonOne.Checked || radioButtonLat.Checked 
+               || radioButtonFractional.Checked)
+               && int.TryParse(textBox1.Text, out int factorCount))
             {
                 label2.Visible = true;
                 buttonPlan.Visible = true;
@@ -167,7 +226,8 @@ namespace Kurs
 
         private void radioButtonFractional_CheckedChanged(object sender, EventArgs e)
         {
-            buttonFractional.Visible = radioButtonFractional.Checked;
+            //buttonFractional.Visible = radioButtonFractional.Checked;
+            buttonFill.Visible = radioButtonFractional.Checked;
             visibleOff();
         }
 
@@ -211,6 +271,11 @@ namespace Kurs
                         formPlanTitle = "Эксперимент с изменением фактора по одному";
                         type = "One";
                     }
+                    else if (radioButtonFractional.Checked)
+                    {
+                        formPlanTitle = "Дробный факторный эксперимент";
+                        type = "Fract";
+                    }
 
                     FormPlan formPlan = new FormPlan(collectedData, type);
                     formPlan.Text = formPlanTitle;
@@ -225,15 +290,10 @@ namespace Kurs
             }
         }
 
-        // Кнопка для дробного плана
-        private void buttonFractional_Click(object sender, EventArgs e)
+        private void ReferenceFill_Click(object sender, EventArgs e)
         {
-            // Создание экземпляра окна 
-            FormPlan formPlan = new FormPlan(int.Parse(textBox1.Text));
-            formPlan.Text = "Дробный факторный эксперимент";
-            this.Hide();
-            formPlan.ShowDialog();
-            this.Show();
+            Reference reference = new Reference();
+            reference.Show();
         }
     }
 

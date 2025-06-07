@@ -54,61 +54,66 @@ namespace Kurs
                     experimentCount += factor.Count;
                 textBoxCount.Text = experimentCount.ToString();
             }
+            if (typePlan == "Fract")
+            {
+                this.factors = dataCollection;
+
+                // Генерация дробного факторного плана
+                GenerateFractionalFactorialPlan(dataCollection);
+            }
         }
 
-        // Конструктор для дробного плана
-        public FormPlan(int factorsCount)
+        private void GenerateFractionalFactorialPlan(FactorData[] factors)
         {
-            InitializeComponent();
+            int factorCount = factors.Length;
+            int experimentCount = (int)Math.Pow(2, factorCount);
+            textBoxCount.Text = experimentCount.ToString();
 
-            dataPlan.Columns.Add("ExperimentNumber", "№");
-            dataPlan.Columns["ExperimentNumber"].Width = 40;
-
-            string[] factorNames = { "A", "B", "C", "D", "E" };
-
-            for (int i = 0; i < factorsCount; i++)
+            // Получаем минимальные и максимальные значения для каждого фактора
+            double[][] factorValues = new double[factorCount][];
+            for (int i = 0; i < factorCount; i++)
             {
-                string columnName = factorNames[i].ToString();
-                dataPlan.Columns.Add(columnName, columnName);
-                dataPlan.Columns[columnName].Width = 58;
+                factorValues[i] = new double[2];
+                factorValues[i][0] = factors[i].Values.Min(); // Нижний уровень
+                factorValues[i][1] = factors[i].Values.Max(); // Верхний уровень
             }
 
-            GenerateFractionalFactorialPlan(factorsCount);
+            // Генерация всех комбинаций
+            List<List<string>> allCombinations = new List<List<string>>();
+            int totalExperiments = (int)Math.Pow(2, factorCount);
 
-            int experimentCount = (int)Math.Pow(2, factorsCount);
-            textBoxCount.Text = experimentCount.ToString();
-        }
+            for (int i = 0; i < totalExperiments; i++)
+            {
+                List<string> combination = new List<string>();
 
-        // Метод для генерации дробного факторного плана
-        private void GenerateFractionalFactorialPlan(int factorsCount)
-        {
-            // Генерация всех комбинаций для двух уровней
-            List<List<string>> allCombinations = GenerateBinaryCombinations(factorsCount);
+                for (int j = 0; j < factorCount; j++)
+                {
+                    int valueIndex = (i >> j) & 1;
+                    combination.Add(factorValues[j][valueIndex].ToString());
+                }
+                combination.Reverse();
+                allCombinations.Add(combination);
+            }
 
             // Вывод комбинаций в DataGridView
             foreach (var combination in allCombinations)
                 addDataPlan(combination);
         }
 
-        // Метод для генерации всех бинарных комбинаций
-        private List<List<string>> GenerateBinaryCombinations(int factorsCount)
+        private void GenerateCustomCombinationsRecursive(FactorData[] factors, int currentFactorIndex, List<string> currentCombination, List<List<string>> allCombinations)
         {
-            List<List<string>> allCombinations = new List<List<string>>();
-            int totalExperiments = (int)Math.Pow(2, factorsCount);
-
-            for (int i = 0; i < totalExperiments; i++)
+            if (currentFactorIndex == factors.Length)
             {
-                List<string> combination = new List<string>();
-
-                for (int j = 0; j < factorsCount; j++)
-                {
-                    int value = (i >> j) & 1;
-                    combination.Add(value.ToString());
-                }
-                combination.Reverse();
-                allCombinations.Add(combination);
+                allCombinations.Add(new List<string>(currentCombination));
+                return;
             }
-            return allCombinations;
+
+            foreach (var value in factors[currentFactorIndex].Values)
+            {
+                currentCombination.Add(value.ToString());
+                GenerateCustomCombinationsRecursive(factors, currentFactorIndex + 1, currentCombination, allCombinations);
+                currentCombination.RemoveAt(currentCombination.Count - 1);
+            }
         }
 
         private List<List<string>> GenerateAllCombinations(FactorData[] factors)
