@@ -67,7 +67,16 @@ namespace Kurs
                 var values = parts.Skip(1).Select(double.Parse).ToList();
                 if (values.Count != levelCount)
                 {
-                    throw new FormatException("Количество значений не соответствует количеству уровней.");
+                    string errFactor = null;
+                    switch (i)
+                    {
+                        case 0: errFactor = "A"; break;
+                        case 1: errFactor = "B"; break;
+                        case 2: errFactor = "C"; break;
+                        case 3: errFactor = "D"; break;
+                        case 4: errFactor = "E"; break;
+                    }
+                    throw new FormatException($"Количество значений не соответствует количеству уровней (Фактор {errFactor}).");
                 }
 
                 data[i] = new FactorData(levelCount, values);
@@ -109,22 +118,35 @@ namespace Kurs
             if (radioButtonFractional.Checked && textBoxA.Text == "")
                 if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
+            if (radioButtonFractional.Checked && textBoxA.Text.Length == 1)
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
 
             if ((radioButtonFull.Checked || radioButtonRand.Checked
                 || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxA.Text == ""))
                 if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
-
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxA.Text.Length == 1))
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
         }
         private void textBoxB_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (radioButtonFractional.Checked && textBoxB.Text == "")
                 if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
+            if (radioButtonFractional.Checked && textBoxB.Text.Length == 1)
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
 
             if ((radioButtonFull.Checked || radioButtonRand.Checked
                 || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxB.Text == ""))
                 if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxB.Text.Length == 1))
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
         }
         private void textBoxC_KeyPress(object sender, KeyPressEventArgs e)
@@ -132,10 +154,17 @@ namespace Kurs
             if (radioButtonFractional.Checked && textBoxC.Text == "")
                 if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
+            if (radioButtonFractional.Checked && textBoxC.Text.Length == 1)
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
 
             if ((radioButtonFull.Checked || radioButtonRand.Checked
                 || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxC.Text == ""))
                 if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxC.Text.Length == 1))
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
         }
         private void textBoxD_KeyPress(object sender, KeyPressEventArgs e)
@@ -143,10 +172,17 @@ namespace Kurs
             if (radioButtonFractional.Checked && textBoxD.Text == "")
                 if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
+            if (radioButtonFractional.Checked && textBoxD.Text.Length == 1)
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
 
             if ((radioButtonFull.Checked || radioButtonRand.Checked
                 || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxD.Text == ""))
                 if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxD.Text.Length == 1))
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
         }
         private void textBoxE_KeyPress(object sender, KeyPressEventArgs e)
@@ -154,10 +190,17 @@ namespace Kurs
             if (radioButtonFractional.Checked && textBoxE.Text == "")
                 if (!(e.KeyChar == '2' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
+            if (radioButtonFractional.Checked && textBoxE.Text.Length == 1)
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
 
             if ((radioButtonFull.Checked || radioButtonRand.Checked
                 || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxE.Text == ""))
                 if (!(e.KeyChar >= '1' && e.KeyChar <= '5' || e.KeyChar == (char)8))
+                    e.KeyChar = (char)0;
+            if ((radioButtonFull.Checked || radioButtonRand.Checked
+                || radioButtonOne.Checked || radioButtonLat.Checked) && (textBoxE.Text.Length == 1))
+                if (!(e.KeyChar == ';' || e.KeyChar == (char)8))
                     e.KeyChar = (char)0;
         }
 
@@ -210,31 +253,35 @@ namespace Kurs
         {
             buttonFill.Visible = radioButtonFull.Checked;
             visibleOff();
+            label1.Text = "Количество факторов (1-5):";
         }
 
         private void radioButtonRand_CheckedChanged(object sender, EventArgs e)
         {
             buttonFill.Visible = radioButtonRand.Checked;
             visibleOff();
+            label1.Text = "Количество факторов (1-5):";
         }
 
         private void radioButtonOne_CheckedChanged(object sender, EventArgs e)
         {
             buttonFill.Visible = radioButtonOne.Checked;
             visibleOff();
+            label1.Text = "Количество факторов (1-5):";
         }
 
         private void radioButtonFractional_CheckedChanged(object sender, EventArgs e)
         {
-            //buttonFractional.Visible = radioButtonFractional.Checked;
             buttonFill.Visible = radioButtonFractional.Checked;
             visibleOff();
+            label1.Text = "Количество факторов (1-5):";
         }
 
         private void radioButtonLat_CheckedChanged(object sender, EventArgs e)
         {
             buttonFill.Visible = radioButtonLat.Checked;
             visibleOff();
+            label1.Text = "Количество факторов (3-5):";
         }
 
         // Кнопка создания плана

@@ -128,11 +128,11 @@
             // 
             // buttonGen
             // 
-            this.buttonGen.Location = new System.Drawing.Point(473, 336);
+            this.buttonGen.Location = new System.Drawing.Point(463, 335);
             this.buttonGen.Name = "buttonGen";
-            this.buttonGen.Size = new System.Drawing.Size(91, 23);
+            this.buttonGen.Size = new System.Drawing.Size(111, 23);
             this.buttonGen.TabIndex = 8;
-            this.buttonGen.Text = "Генерация";
+            this.buttonGen.Text = "Формирование";
             this.buttonGen.UseVisualStyleBackColor = true;
             this.buttonGen.Click += new System.EventHandler(this.buttonGen_Click);
             // 

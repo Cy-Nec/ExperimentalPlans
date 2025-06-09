@@ -152,11 +152,11 @@
             // buttonFill
             // 
             this.buttonFill.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
-            this.buttonFill.Location = new System.Drawing.Point(514, 57);
+            this.buttonFill.Location = new System.Drawing.Point(487, 57);
             this.buttonFill.Name = "buttonFill";
-            this.buttonFill.Size = new System.Drawing.Size(226, 23);
+            this.buttonFill.Size = new System.Drawing.Size(283, 23);
             this.buttonFill.TabIndex = 10;
-            this.buttonFill.Text = "Заполнить количество уровней";
+            this.buttonFill.Text = "Заполнить факторное пространство";
             this.buttonFill.UseVisualStyleBackColor = true;
             this.buttonFill.Visible = false;
             this.buttonFill.Click += new System.EventHandler(this.button1_Click);
@@ -278,7 +278,7 @@
             this.labelError.AutoSize = true;
             this.labelError.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
             this.labelError.ForeColor = System.Drawing.Color.Red;
-            this.labelError.Location = new System.Drawing.Point(480, 268);
+            this.labelError.Location = new System.Drawing.Point(480, 269);
             this.labelError.Name = "labelError";
             this.labelError.Size = new System.Drawing.Size(290, 16);
             this.labelError.TabIndex = 23;

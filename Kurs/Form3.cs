@@ -130,7 +130,7 @@ namespace Kurs
                 grid.Visible = true;
                 gridIndex++;
 
-                // Подсчет экспериментов для текущего квадрата
+                // Подсчёт экспериментов для текущего квадрата
                 totalExperiments += levelCount * levelCount;
             }
 
