@@ -59,11 +59,11 @@ namespace Kurs
                 this.factors = dataCollection;
 
                 // Генерация дробного факторного плана
-                GenerateFractionalFactorialPlan(dataCollection);
+                GenerateFractionalPlan(dataCollection);
             }
         }
 
-        private void GenerateFractionalFactorialPlan(FactorData[] factors)
+        private void GenerateFractionalPlan(FactorData[] factors)
         {
             int factorCount = factors.Length;
             int experimentCount = (int)Math.Pow(2, factorCount);
