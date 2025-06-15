@@ -147,12 +147,8 @@ namespace Kurs
         {
             string[,] square = new string[n, n];
             for (int i = 0; i < n; i++)
-            {
                 for (int j = 0; j < n; j++)
-                {
                     square[i, j] = values[(i + j) % n].ToString();
-                }
-            }
             return square;
         }
 
@@ -226,18 +222,17 @@ namespace Kurs
                                 // Запись заголовков столбцов
                                 var headers = new List<string> { "Фактор" };
                                 headers.AddRange(grid.Columns.Cast<DataGridViewColumn>().Select(column => column.HeaderText));
-                                writer.WriteLine(string.Join(";", headers.ToArray())); // Преобразуем в массив
+                                writer.WriteLine(string.Join(";", headers.ToArray())); // Преобразование в массив
 
                                 // Запись данных строк
                                 foreach (DataGridViewRow row in grid.Rows)
                                 {
                                     var rowData = new List<string> { row.HeaderCell.Value?.ToString() ?? "" }; // Название строки
                                     rowData.AddRange(row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? ""));
-                                    writer.WriteLine(string.Join(";", rowData.ToArray())); // Преобразуем в массив
+                                    writer.WriteLine(string.Join(";", rowData.ToArray())); // Преобразование в массив
                                 }
 
-                                // Разделение между планами
-                                writer.WriteLine(); // Пустая строка
+                                writer.WriteLine();
                             }
                         }
 

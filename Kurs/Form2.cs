@@ -44,7 +44,7 @@ namespace Kurs
                 buttonGen.Visible = true;
                 textBoxCount.ReadOnly = false;
                 this.levels = dataCollection.Select(d => d.Count).ToArray();
-                this.factors = dataCollection; // Сохраняем массив FactorData[]
+                this.factors = dataCollection; // Сохранение массива FactorData[]
             }
             if (typePlan == "One")
             {
@@ -66,41 +66,16 @@ namespace Kurs
         private void GenerateFractionalPlan(FactorData[] factors)
         {
             int factorCount = factors.Length;
-            int experimentCount = (int)Math.Pow(2, factorCount);
-            textBoxCount.Text = experimentCount.ToString();
+            textBoxCount.Text = Math.Pow(factorCount, factorCount).ToString();
 
-            // Получаем минимальные и максимальные значения для каждого фактора
-            double[][] factorValues = new double[factorCount][];
-            for (int i = 0; i < factorCount; i++)
-            {
-                factorValues[i] = new double[2];
-                factorValues[i][0] = factors[i].Values.Min(); // Нижний уровень
-                factorValues[i][1] = factors[i].Values.Max(); // Верхний уровень
-            }
-
-            // Генерация всех комбинаций
             List<List<string>> allCombinations = new List<List<string>>();
-            int totalExperiments = (int)Math.Pow(2, factorCount);
+            GenerateCombRecursFract(factors, 0, new List<string>(), allCombinations);
 
-            for (int i = 0; i < totalExperiments; i++)
-            {
-                List<string> combination = new List<string>();
-
-                for (int j = 0; j < factorCount; j++)
-                {
-                    int valueIndex = (i >> j) & 1;
-                    combination.Add(factorValues[j][valueIndex].ToString());
-                }
-                combination.Reverse();
-                allCombinations.Add(combination);
-            }
-
-            // Вывод комбинаций в DataGridView
             foreach (var combination in allCombinations)
                 addDataPlan(combination);
         }
 
-        private void GenerateCustomCombinationsRecursive(FactorData[] factors, int currentFactorIndex, List<string> currentCombination, List<List<string>> allCombinations)
+        private void GenerateCombRecursFract(FactorData[] factors, int currentFactorIndex, List<string> currentCombination, List<List<string>> allCombinations)
         {
             if (currentFactorIndex == factors.Length)
             {
@@ -111,7 +86,7 @@ namespace Kurs
             foreach (var value in factors[currentFactorIndex].Values)
             {
                 currentCombination.Add(value.ToString());
-                GenerateCustomCombinationsRecursive(factors, currentFactorIndex + 1, currentCombination, allCombinations);
+                GenerateCombRecursFract(factors, currentFactorIndex + 1, currentCombination, allCombinations);
                 currentCombination.RemoveAt(currentCombination.Count - 1);
             }
         }
